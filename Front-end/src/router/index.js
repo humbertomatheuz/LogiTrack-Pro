@@ -43,11 +43,7 @@ const routes = [
             name: 'DashboardCronogramaManutencao',
             component: () => import('../views/dashboard/CronogramaManutencao.vue')
           },
-          {
-            path: 'ranking-utilizacao',
-            name: 'DashboardRankingUtilizacao',
-            component: () => import('../views/dashboard/RankingUtilizacao.vue')
-          },
+
           {
             path: 'projecao-financeira',
             name: 'DashboardProjecaoFinanceira',

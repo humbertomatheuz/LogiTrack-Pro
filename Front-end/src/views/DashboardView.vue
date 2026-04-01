@@ -38,10 +38,9 @@ const dashboardStore = useDashboardStore();
 const globalPeriod = ref(dashboardStore.globalFilters.period);
 
 const tabs = [
-  { id: 'km-percorrido', title: 'KM Percorrido', routeName: 'DashboardKmPercorrido', icon: 'route' },
+  { id: 'km-percorrido', title: 'KM Percorrido e Ranking', routeName: 'DashboardKmPercorrido', icon: 'route' },
   { id: 'volume-categoria', title: 'Volume por Categoria', routeName: 'DashboardVolumeCategoria', icon: 'bar_chart' },
   { id: 'cronograma-manutencao', title: 'Manutenção', routeName: 'DashboardCronogramaManutencao', icon: 'build' },
-  { id: 'ranking-utilizacao', title: 'Ranking', routeName: 'DashboardRankingUtilizacao', icon: 'format_list_numbered' },
   { id: 'projecao-financeira', title: 'Financeiro', routeName: 'DashboardProjecaoFinanceira', icon: 'attach_money' }
 ];
 

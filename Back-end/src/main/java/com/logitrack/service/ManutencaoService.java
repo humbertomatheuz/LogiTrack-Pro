@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,9 +24,20 @@ public class ManutencaoService {
     private VeiculoRepository veiculoRepository;
 
     public List<ManutencaoDTO> listarTodas() {
-        return manutencaoRepository.findAll().stream()
+        List<ManutencaoDTO> manutencoes = manutencaoRepository.findAll().stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
+
+        manutencoes.sort(Comparator.comparing(dto -> {
+            switch (dto.getStatus() != null ? dto.getStatus() : "") {
+                case "PENDENTE": return 1;
+                case "EM_REALIZACAO": return 2;
+                case "CONCLUIDA": return 3;
+                default: return 4;
+            }
+        }));
+
+        return manutencoes;
     }
 
     @Transactional
