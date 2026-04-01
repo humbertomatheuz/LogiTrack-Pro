@@ -70,9 +70,9 @@ docker compose down -v
 ```
 ┌─────────────────────── logitrack_network ────────────────────┐
 │  Vue 3 + Vite       /api/*      Spring Boot 4 + Java 17      │
-│  (porta 3000)   ──────────►     (porta 8080)                  │
-│                                      │ JDBC                   │
-│                              PostgreSQL 15 (porta 5444)       │
+│  (porta 3000)   ──────────►     (porta 8080)                 │
+│                                      │ JDBC                  │
+│                              PostgreSQL 15 (porta 5444)      │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -80,14 +80,15 @@ docker compose down -v
 
 | Camada | Tecnologia | Justificativa |
 |---|---|---|
-| Backend | Spring Boot 4 + Java 17 | Ecossistema maduro, JPA nativo, segurança robusta |
-| ORM | Spring Data JPA + Hibernate | Repositórios declarativos, sem SQL manual |
+| Backend | Spring Boot 3 + Java 17 | Ecossistema maduro, JPA nativo, segurança robusta |
+| Relatórios (HU03/04) | SQL Nativo (@Query) | Performance superior e conformidade com requisitos de extração direta via SQL |
+| Paginação (HU04) | SQL Offset/Limit | Paginação feita no banco para evitar transferência desnecessária de dados |
 | Auth | Spring Security + JJWT 0.11.5 | JWT stateless, ideal para SPAs |
-| Frontend | Vue 3 + Vite 8 | HMR nativo, build ultra-rápido |
-| Estado | Pinia 3 | Store oficial Vue 3, API simples |
-| HTTP | Axios 1.14 | Interceptors para injeção automática de JWT |
-| UI | Bootstrap 5.3 | Grid responsivo + componentes prontos |
-| Banco | PostgreSQL 15 | Suporte robusto a DECIMAL, TIMESTAMP, constraints |
+| Segurança (RBAC) | PreAuthorize (ADMIN) | Dashboard e APIs financeiras restritas apenas para perfil Administrador |
+| Frontend | Vue 3 + Vite 5 | HMR nativo, build ultra-rápido |
+| Estado | Pinia 2 | Store oficial Vue 3, API simples |
+| UI | Bootstrap 5.3 | Grid responsivo + componentes prontos com estética premium |
+| Banco | PostgreSQL 15 | Suporte robusto a DECIMAL, TIMESTAMP e constraints |
 
 **Auth:** O usuário faz login → backend valida com BCrypt → retorna JWT → frontend envia `Authorization: Bearer <token>` em cada requisição.
 
@@ -109,7 +110,6 @@ A tabela `usuarios` foi **adicionada** ao schema existente para suportar autenti
 |---|---|
 | Nova tabela `usuarios` | Schema original não previa autenticação; adicionada sem alterar tabelas de negócio |
 | `perfil VARCHAR(20)` (sem FK) | Valores fixos (`ADMIN`, `OPERADOR`) dispensam tabela separada no MVP |
-| `BIGSERIAL` em vez de `SERIAL` | Evita overflow em tabelas de alta volumetria |
 | `ON DELETE CASCADE` nas FKs | Remove viagens/manutenções automaticamente ao excluir veículo |
 | `DEFAULT 'PENDENTE'` em status | Garante valor inicial sem depender da aplicação |
 
@@ -125,9 +125,6 @@ docker compose logs -f [backend|frontend|db]
 
 # Acessar o banco via psql
 docker exec -it logitrack-db psql -U logi_user -d logitrack_db
-
-# Adicionar usuários manualmente
-docker exec -i logitrack-db psql -U logi_user -d logitrack_db < Back-end/add_users.sql
 
 # Forçar reinicialização do banco
 docker compose down -v && docker compose up --build

@@ -5,7 +5,7 @@
 
 -- 1. Criação da Tabela de Veículos
 CREATE TABLE veiculos (
-    id BIGSERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     placa VARCHAR(10) UNIQUE NOT NULL,
     modelo VARCHAR(50) NOT NULL,
     tipo VARCHAR(20) CHECK (tipo IN ('LEVE', 'PESADO')),
@@ -14,8 +14,8 @@ CREATE TABLE veiculos (
 
 -- 2. Criação da Tabela de Viagens
 CREATE TABLE viagens (
-    id BIGSERIAL PRIMARY KEY,
-    veiculo_id BIGINT REFERENCES veiculos(id) ON DELETE CASCADE,
+    id SERIAL PRIMARY KEY,
+    veiculo_id INTEGER REFERENCES veiculos(id) ON DELETE CASCADE,
     data_saida TIMESTAMP NOT NULL,
     data_chegada TIMESTAMP,
     origem VARCHAR(100),
@@ -25,8 +25,8 @@ CREATE TABLE viagens (
 
 -- 3. Criação da Tabela de Manutenções
 CREATE TABLE manutencoes (
-    id BIGSERIAL PRIMARY KEY,
-    veiculo_id BIGINT REFERENCES veiculos(id) ON DELETE CASCADE,
+    id SERIAL PRIMARY KEY,
+    veiculo_id INTEGER REFERENCES veiculos(id) ON DELETE CASCADE,
     data_inicio DATE NOT NULL,
     data_finalizacao DATE,
     tipo_servico VARCHAR(100),
@@ -36,7 +36,7 @@ CREATE TABLE manutencoes (
 
 -- 4. Criação da tabela de usuários para a HU01
 CREATE TABLE usuarios (
-    id BIGSERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     matricula VARCHAR(20) UNIQUE NOT NULL,
     login VARCHAR(50) UNIQUE NOT NULL,
@@ -300,111 +300,112 @@ INSERT INTO viagens (veiculo_id, data_saida, data_chegada, origem, destino, km_p
 -- Veículo 1 — Fiat Fiorino
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
 (1, '2024-02-05', '2024-02-05', 'Troca de Óleo',         350.00,  'CONCLUIDA'),
-(1, '2024-05-18', '2024-05-19', 'Troca de Filtros',      420.00,  'CONCLUIDA'),
-(1, '2024-09-10', '2024-09-11', 'Alinhamento e Balanceamento', 280.00, 'CONCLUIDA'),
-(1, '2025-03-15', NULL,         'Revisão Geral 30.000 km',1100.00, 'PENDENTE');
+(1, '2024-05-18', '2024-05-19', 'Preventiva',      420.00,  'CONCLUIDA'),
+(1, '2024-09-10', '2024-09-11', 'Suspensão', 280.00, 'CONCLUIDA'),
+(1, '2025-03-15', NULL,         'Preventiva',1100.00, 'PENDENTE');
 
 -- Veículo 2 — Volvo FH 460
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
-(2, '2024-01-20', '2024-01-22', 'Revisão de Freios',    1800.00, 'CONCLUIDA'),
-(2, '2024-05-10', '2024-05-12', 'Troca de Pneus Traseiros',4800.00,'CONCLUIDA'),
-(2, '2024-09-25', '2024-09-28', 'Troca de Óleo e Filtros',650.00, 'CONCLUIDA'),
-(2, '2025-02-01', '2025-02-03', 'Revisão de Suspensão',  2200.00, 'EM_REALIZACAO');
+(2, '2024-01-20', '2024-01-22', 'Freios',    1800.00, 'CONCLUIDA'),
+(2, '2024-05-10', '2024-05-12', 'Troca de Pneus',4800.00,'CONCLUIDA'),
+(2, '2024-09-25', '2024-09-28', 'Troca de Óleo',650.00, 'CONCLUIDA'),
+(2, '2025-02-01', '2025-02-03', 'Suspensão',  2200.00, 'EM_REALIZACAO');
 
 -- Veículo 3 — Mercedes Sprinter
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
 (3, '2024-03-08', '2024-03-08', 'Troca de Óleo',         380.00,  'CONCLUIDA'),
-(3, '2024-06-20', '2024-06-21', 'Revisão de Freios',     950.00,  'CONCLUIDA'),
-(3, '2024-10-14', '2024-10-15', 'Troca de Correia Dentada',780.00,'CONCLUIDA'),
+(3, '2024-06-20', '2024-06-21', 'Freios',     950.00,  'CONCLUIDA'),
+(3, '2024-10-14', '2024-10-15', 'Revisão do Motor',780.00,'CONCLUIDA'),
 (3, '2025-03-20', NULL,         'Troca de Pneus',        1600.00,  'PENDENTE');
 
 -- Veículo 4 — Scania R500
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
-(4, '2024-02-12', '2024-02-14', 'Revisão Completa',      3500.00, 'CONCLUIDA'),
-(4, '2024-06-05', '2024-06-07', 'Troca de Pneus Dianteiros',3200.00,'CONCLUIDA'),
-(4, '2024-10-18', '2024-10-20', 'Troca de Óleo e Filtros',720.00, 'CONCLUIDA'),
-(4, '2025-01-15', '2025-01-17', 'Revisão de Freios',     2100.00, 'EM_REALIZACAO');
+(4, '2024-02-12', '2024-02-14', 'Preventiva',      3500.00, 'CONCLUIDA'),
+(4, '2024-06-05', '2024-06-07', 'Troca de Pneus',3200.00,'CONCLUIDA'),
+(4, '2024-10-18', '2024-10-20', 'Troca de Óleo',720.00, 'CONCLUIDA'),
+(4, '2025-01-15', '2025-01-17', 'Freios',     2100.00, 'EM_REALIZACAO');
 
 -- Veículo 5 — Volkswagen Delivery
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
 (5, '2024-02-28', '2024-02-28', 'Troca de Óleo',         310.00,  'CONCLUIDA'),
-(5, '2024-07-01', '2024-07-02', 'Alinhamento e Balanceamento',260.00,'CONCLUIDA'),
-(5, '2024-10-30', '2024-10-31', 'Revisão de Freios',     870.00,  'CONCLUIDA'),
-(5, '2025-03-28', NULL,         'Troca de Filtros',       380.00,  'PENDENTE');
+(5, '2024-07-01', '2024-07-02', 'Suspensão',260.00,'CONCLUIDA'),
+(5, '2024-10-30', '2024-10-31', 'Freios',     870.00,  'CONCLUIDA'),
+(5, '2025-03-28', NULL,         'Preventiva',       380.00,  'PENDENTE');
 
 -- Veículo 6 — Ford Cargo 1723
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
 (6, '2024-01-28', '2024-01-30', 'Troca de Pneus',        4200.00, 'CONCLUIDA'),
-(6, '2024-05-20', '2024-05-22', 'Revisão de Motor',      2800.00, 'CONCLUIDA'),
-(6, '2024-09-08', '2024-09-10', 'Troca de Óleo e Filtros',680.00, 'CONCLUIDA'),
-(6, '2025-02-20', NULL,         'Revisão de Suspensão',  1900.00,  'PENDENTE');
+(6, '2024-05-20', '2024-05-22', 'Revisão do Motor',      2800.00, 'CONCLUIDA'),
+(6, '2024-09-08', '2024-09-10', 'Troca de Óleo',680.00, 'CONCLUIDA'),
+(6, '2025-02-20', NULL,         'Suspensão',  1900.00,  'PENDENTE');
 
 -- Veículo 7 — Renault Master
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
 (7, '2024-03-15', '2024-03-15', 'Troca de Óleo',         290.00,  'CONCLUIDA'),
-(7, '2024-07-10', '2024-07-11', 'Revisão de Freios',     810.00,  'CONCLUIDA'),
-(7, '2024-11-05', '2024-11-06', 'Troca de Pneus Dianteiros',1400.00,'CONCLUIDA'),
-(7, '2025-03-12', '2025-03-14', 'Revisão Elétrica',       650.00, 'EM_REALIZACAO');
+(7, '2024-07-10', '2024-07-11', 'Freios',     810.00,  'CONCLUIDA'),
+(7, '2024-11-05', '2024-11-06', 'Troca de Pneus',1400.00,'CONCLUIDA'),
+(7, '2025-03-12', '2025-03-14', 'Sistema Elétrico',       650.00, 'EM_REALIZACAO');
 
 -- Veículo 8 — DAF XF 480
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
-(8, '2024-02-15', '2024-02-17', 'Troca de Pneus Traseiros',4600.00,'CONCLUIDA'),
-(8, '2024-06-18', '2024-06-20', 'Revisão de Freios',     1950.00, 'CONCLUIDA'),
-(8, '2024-10-07', '2024-10-09', 'Troca de Óleo e Filtros',700.00, 'CONCLUIDA'),
-(8, '2025-01-25', NULL,         'Revisão Completa',       3800.00,  'PENDENTE');
+(8, '2024-02-15', '2024-02-17', 'Troca de Pneus',4600.00,'CONCLUIDA'),
+(8, '2024-06-18', '2024-06-20', 'Freios',     1950.00, 'CONCLUIDA'),
+(8, '2024-10-07', '2024-10-09', 'Troca de Óleo',700.00, 'CONCLUIDA'),
+(8, '2025-01-25', NULL,         'Preventiva',       3800.00,  'PENDENTE');
 
 -- Veículo 9 — Iveco Daily 35S14
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
 (9, '2024-03-22', '2024-03-22', 'Troca de Óleo',         330.00,  'CONCLUIDA'),
-(9, '2024-07-14', '2024-07-15', 'Alinhamento e Balanceamento',240.00,'CONCLUIDA'),
-(9, '2024-11-18', '2024-11-19', 'Revisão de Freios',     920.00,  'CONCLUIDA'),
-(9, '2025-03-30', NULL,         'Troca de Correia Dentada',690.00, 'PENDENTE');
+(9, '2024-07-14', '2024-07-15', 'Suspensão',240.00,'CONCLUIDA'),
+(9, '2024-11-18', '2024-11-19', 'Freios',     920.00,  'CONCLUIDA'),
+(9, '2025-03-30', NULL,         'Revisão do Motor',690.00, 'PENDENTE');
 
 -- Veículo 10 — Mercedes Actros 2651
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
-(10, '2024-02-08', '2024-02-10', 'Revisão Completa',     4200.00, 'CONCLUIDA'),
+(10, '2024-02-08', '2024-02-10', 'Preventiva',     4200.00, 'CONCLUIDA'),
 (10, '2024-06-30', '2024-07-02', 'Troca de Pneus',       5200.00, 'CONCLUIDA'),
-(10, '2024-10-25', '2024-10-27', 'Troca de Óleo e Filtros',750.00,'CONCLUIDA'),
-(10, '2025-02-15', '2025-02-17', 'Revisão de Suspensão', 2600.00, 'EM_REALIZACAO');
+(10, '2024-10-25', '2024-10-27', 'Troca de Óleo',750.00,'CONCLUIDA'),
+(10, '2025-02-15', '2025-02-17', 'Suspensão', 2600.00, 'EM_REALIZACAO');
 
 -- Veículo 11 — Fiat Ducato
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
 (11, '2024-02-25', '2024-02-25', 'Troca de Óleo',         300.00, 'CONCLUIDA'),
-(11, '2024-06-08', '2024-06-09', 'Revisão de Freios',     840.00, 'CONCLUIDA'),
-(11, '2024-10-02', '2024-10-03', 'Troca de Filtros',      360.00, 'CONCLUIDA'),
+(11, '2024-06-08', '2024-06-09', 'Freios',     840.00, 'CONCLUIDA'),
+(11, '2024-10-02', '2024-10-03', 'Preventiva',      360.00, 'CONCLUIDA'),
 (11, '2025-03-05', NULL,         'Troca de Pneus',        1280.00,  'PENDENTE');
 
 -- Veículo 12 — Scania P360
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
-(12, '2024-01-25', '2024-01-27', 'Revisão de Motor',     3100.00, 'CONCLUIDA'),
-(12, '2024-05-05', '2024-05-07', 'Troca de Pneus Traseiros',4400.00,'CONCLUIDA'),
-(12, '2024-09-01', '2024-09-03', 'Troca de Óleo e Filtros',660.00, 'CONCLUIDA'),
-(12, '2025-01-10', NULL,         'Revisão de Freios',     2050.00,  'PENDENTE');
+(12, '2024-01-25', '2024-01-27', 'Revisão do Motor',     3100.00, 'CONCLUIDA'),
+(12, '2024-05-05', '2024-05-07', 'Troca de Pneus',4400.00,'CONCLUIDA'),
+(12, '2024-09-01', '2024-09-03', 'Troca de Óleo',660.00, 'CONCLUIDA'),
+(12, '2025-01-10', NULL,         'Freios',     2050.00,  'PENDENTE');
 
 -- Veículo 13 — Volkswagen Virtus Cargo
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
 (13, '2024-03-18', '2024-03-18', 'Troca de Óleo',         270.00, 'CONCLUIDA'),
-(13, '2024-07-22', '2024-07-23', 'Alinhamento e Balanceamento',220.00,'CONCLUIDA'),
-(13, '2024-11-10', '2024-11-11', 'Revisão de Freios',     790.00, 'CONCLUIDA'),
-(13, '2025-03-22', '2025-03-24', 'Revisão Elétrica',       540.00,'EM_REALIZACAO');
+(13, '2024-07-22', '2024-07-23', 'Suspensão',220.00,'CONCLUIDA'),
+(13, '2024-11-10', '2024-11-11', 'Freios',     790.00, 'CONCLUIDA'),
+(13, '2025-03-22', '2025-03-24', 'Sistema Elétrico',       540.00,'EM_REALIZACAO');
 
 -- Veículo 14 — MAN TGX 28.440
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
-(14, '2024-02-02', '2024-02-04', 'Revisão Completa',     3800.00, 'CONCLUIDA'),
+(14, '2024-02-02', '2024-02-04', 'Preventiva',     3800.00, 'CONCLUIDA'),
 (14, '2024-06-12', '2024-06-14', 'Troca de Pneus',       5000.00, 'CONCLUIDA'),
-(14, '2024-09-20', '2024-09-22', 'Troca de Óleo e Filtros',730.00,'CONCLUIDA'),
-(14, '2025-02-28', NULL,         'Revisão de Suspensão',  2400.00,  'PENDENTE');
+(14, '2024-09-20', '2024-09-22', 'Troca de Óleo',730.00,'CONCLUIDA'),
+(14, '2025-02-28', NULL,         'Suspensão',  2400.00,  'PENDENTE');
 
 -- Veículo 15 — Toyota Hilux Cabine
 INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico, custo_estimado, status) VALUES
 (15, '2024-03-01', '2024-03-01', 'Troca de Óleo',         340.00, 'CONCLUIDA'),
-(15, '2024-07-08', '2024-07-09', 'Revisão de Freios e Pastilhas',920.00,'CONCLUIDA'),
-(15, '2024-11-15', '2024-11-16', 'Alinhamento, Balanceamento e Rodízio',430.00,'CONCLUIDA'),
-(15, '2025-03-18', NULL,         'Revisão Geral 50.000 km',1850.00,'PENDENTE');
+(15, '2024-07-08', '2024-07-09', 'Freios',920.00,'CONCLUIDA'),
+(15, '2024-11-15', '2024-11-16', 'Suspensão',430.00,'CONCLUIDA'),
+(15, '2025-03-18', NULL,         'Preventiva',1850.00,'PENDENTE');
 
 -- ============================================================
 -- USUÁRIO ADMIN INICIAL (Senha: admin123)
 -- Hash BCrypt gerado com bcrypt(rounds=10, prefix=2a)
 -- ============================================================
-INSERT INTO usuarios (nome, matricula, login, senha, perfil)
-VALUES ('Administrador', 'ADM001', 'admin', '$2a$10$2DI3p8kxHYSSGc3GQKeYouC4FFeeVHWXzG593cu2qRDrlponKTMi2', 'ADMIN');
+INSERT INTO usuarios (nome, matricula, login, senha, perfil) VALUES
+('Administrador', 'ADM001', 'admin', '$2a$10$2DI3p8kxHYSSGc3GQKeYouC4FFeeVHWXzG593cu2qRDrlponKTMi2', 'ADMIN'),
+('Operador', 'OP002', 'operador', '$2b$10$5iBFADfRFMvhMBOCqViupuDz4Wa0OZVNbr1yZ.mR62moT7wjYE/YS', 'OPERADOR');
