@@ -1,0 +1,39 @@
+# Este arquivo render.yaml (Blueprint) é o padrão preferido pelo Render para multi-serviços.
+# Se você importar este arquivo no painel do Render (Blueprints), ele criará o Banco e o Back-end automaticamente.
+
+services:
+  # Serviço de Banco de Dados Gerenciado (Melhor que usar container de DB no Render)
+  - type: database
+    name: logitrack-db-prod
+    user: logi_user
+    databaseName: logitrack_db
+    plan: free # Troque para starter ou pro se precisar de persistência real ou mais recursos
+
+  # Serviço do Back-end
+  - type: web
+    name: logitrack-backend
+    env: docker
+    dockerContext: . # Assume que o render.yaml está dentro de Back-end
+    dockerfilePath: Dockerfile
+    plan: free # Troque conforme necessário
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        # Conexão automática usando a URL do banco gerenciado criado acima
+        fromDatabase:
+          name: logitrack-db-prod
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: logitrack-db-prod
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: logitrack-db-prod
+          property: password
+      - key: JWT_SECRET
+        # Recomendável colocar via Dashboard ou gerar um valor fixo
+        value: u2UBiKSz4stj908qc1oxXWmFeLdUIKclacFYPpN6IXvtKRoknYYH9t8EQLfUvaIhNPUDYOPK
+      - key: JWT_EXPIRATION
+        value: "3600000"
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: "update" # Use 'update' se não tiver certeza que o banco importou o SQL. Ou 'validate' se rodar o SQL manualmente.

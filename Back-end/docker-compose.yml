@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # O Banco de Dados (Render recomenda usar o serviço gerenciado deles, mas este Compose funciona no import)
+  db:
+    image: postgres:15-alpine
+    container_name: logitrack-db-prod
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-logi_user}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-logi_password}
+      POSTGRES_DB: ${DATABASE_NAME:-logitrack_db}
+    volumes:
+      - logitrack_data_prod:/var/lib/postgresql/data
+    networks:
+      - logitrack_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${DATABASE_USER:-logi_user} -d $${DATABASE_NAME:-logitrack_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # O Back-end
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: logitrack-backend-prod
+    ports:
+      - "8080:8080"
+    environment:
+      # Render injeta dinamicamente o PORT, usamos 8080 por padrão
+      PORT: 8080
+      # Conexão com o banco (seja interno no Compose ou externo no Render)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DATABASE_NAME:-logitrack_db}
+      SPRING_DATASOURCE_USERNAME: ${DATABASE_USER:-logi_user}
+      SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD:-logi_password}
+      # Hibernate config
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_JPA_SHOW_SQL: "false"
+      # JWT (Use variáveis de ambiente secretas no painel do Render!)
+      JWT_SECRET: ${JWT_SECRET:-u2UBiKSz4stj908qc1oxXWmFeLdUIKclacFYPpN6IXvtKRoknYYH9t8EQLfUvaIhNPUDYOPK}
+      JWT_EXPIRATION: 3600000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - logitrack_net
+
+networks:
+  logitrack_net:
+    driver: bridge
+
+volumes:
+  logitrack_data_prod:
+    driver: local
