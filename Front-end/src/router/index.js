@@ -2,11 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import LoginView from '../views/LoginView.vue'
 
+import MainLayout from '../layouts/MainLayout.vue'
+
 const routes = [
-  {
-    path: '/',
-    redirect: '/login'
-  },
   {
     path: '/login',
     name: 'Login',
@@ -14,10 +12,25 @@ const routes = [
     meta: { requiresGuest: true }
   },
   {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: () => import('../views/DashboardView.vue'),
-    meta: { requiresAuth: true }
+    path: '/',
+    component: MainLayout,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        redirect: '/gerenciamento'
+      },
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('../views/DashboardView.vue')
+      },
+      {
+        path: 'gerenciamento',
+        name: 'Gerenciamento',
+        component: () => import('../views/GerenciamentoView.vue')
+      }
+    ]
   }
 ]
 
@@ -39,7 +52,7 @@ router.beforeEach((to, from, next) => {
     }
   } else if (to.meta.requiresGuest) {
     if (authStore.isAuthenticated) {
-      next({ name: 'Dashboard' })
+      next({ name: 'Gerenciamento' })
     } else {
       next()
     }

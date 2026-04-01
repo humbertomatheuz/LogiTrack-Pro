@@ -59,6 +59,6 @@ INSERT INTO manutencoes (veiculo_id, data_inicio, data_finalizacao, tipo_servico
 (3, '2024-05-20', '2024-05-20', 'Troca de Pneus', 2200.00, 'CONCLUIDA');
 
 -- Inserindo um Admin inicial (Senha: admin123)
--- Hash BCrypt: $2a$10$slYQmyNdGzin7olVi9ai2OPST9/PgBkqquzi.Ss27R.jKXFVW4pO
+-- Hash BCrypt gerado com bcrypt(rounds=10, prefix=2a) e verificado
 INSERT INTO usuarios (nome, matricula, login, senha, perfil) 
-VALUES ('Administrador', 'ADM001', 'admin', '$2a$10$slYQmyNdGzin7olVi9ai2OPST9/PgBkqquzi.Ss27R.jKXFVW4pO', 'ADMIN');
+VALUES ('Administrador', 'ADM001', 'admin', '$2a$10$2DI3p8kxHYSSGc3GQKeYouC4FFeeVHWXzG593cu2qRDrlponKTMi2', 'ADMIN');

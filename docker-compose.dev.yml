@@ -1,0 +1,102 @@
+version: '3.8'
+
+# ============================================================
+# docker-compose.dev.yml — Ambiente de desenvolvimento (WSL)
+# Hot-reload habilitado para frontend (Vite) e backend (Spring Boot)
+#
+# Uso:
+#   docker compose -f docker-compose.dev.yml up --build
+#   docker compose -f docker-compose.dev.yml up          (sem rebuild)
+# ============================================================
+
+services:
+  db:
+    image: postgres:15
+    container_name: logitrack-db
+    restart: always
+    environment:
+      POSTGRES_USER: logi_user
+      POSTGRES_PASSWORD: logi_password
+      POSTGRES_DB: logitrack_db
+    ports:
+      - '5444:5432'
+    volumes:
+      - ./Back-end/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - logitrack_data:/var/lib/postgresql/data
+    networks:
+      - logitrack_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U logi_user -d logitrack_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./Back-end
+      dockerfile: Dockerfile
+    container_name: logitrack-backend
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/logitrack_db
+      SPRING_DATASOURCE_USERNAME: logi_user
+      SPRING_DATASOURCE_PASSWORD: logi_password
+      # update-drop apenas em dev; use validate em produção
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      JWT_SECRET: u2UBiKSz4stj908qc1oxXWmFeLdUIKclacFYPpN6IXvtKRoknYYH9t8EQLfUvaIhNPUDYOPK
+      JWT_EXPIRATION: 3600000
+      # Spring Boot DevTools — hot-reload automático
+      SPRING_DEVTOOLS_RESTART_ENABLED: 'true'
+      SPRING_DEVTOOLS_LIVERELOAD_ENABLED: 'true'
+    volumes:
+      # Monta o código-fonte sem sobrescrever o cache Maven
+      - ./Back-end/src:/app/src
+      - ./Back-end/pom.xml:/app/pom.xml
+      # Cache Maven persistente — evita baixar dependências a cada rebuild
+      - maven_cache:/root/.m2
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - logitrack_network
+
+  frontend:
+    build:
+      context: ./Front-end
+      dockerfile: Dockerfile.dev
+    container_name: logitrack-frontend
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      # Polling necessário no WSL (inotify não funciona via 9P filesystem)
+      CHOKIDAR_USEPOLLING: 'true'
+      CHOKIDAR_INTERVAL: '500'
+      WATCHPACK_POLLING: 'true'
+      NODE_ENV: development
+    volumes:
+      # Hot-reload: monta src e config sem sobrescrever node_modules
+      - ./Front-end/src:/app/src
+      - ./Front-end/index.html:/app/index.html
+      - ./Front-end/vite.config.js:/app/vite.config.js
+      - ./Front-end/public:/app/public
+      # node_modules fica dentro do container (sem conflito de plataforma)
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - logitrack_network
+
+networks:
+  logitrack_network:
+    driver: bridge
+
+volumes:
+  logitrack_data:
+    driver: local
+  maven_cache:
+    driver: local
+  frontend_node_modules:
+    driver: local

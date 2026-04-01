@@ -162,7 +162,7 @@ async function handleLogin() {
 
   try {
     await authStore.login({ login: form.value.login, senha: form.value.senha })
-    router.push('/dashboard')
+    router.push('/gerenciamento')
   } catch (err) {
     // Mensagem genérica conforme HU01 (não expõe qual campo está errado)
     errorMessage.value = 'Por favor, verifique seus dados e tente novamente.'
