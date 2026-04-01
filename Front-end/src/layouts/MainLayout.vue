@@ -16,7 +16,7 @@
             Gerenciamento
           </router-link>
         </li>
-        <li>
+        <li v-if="authStore.isAdmin">
           <router-link to="/dashboard" class="nav-link" active-class="nav-link--active">
             Dashboard
           </router-link>

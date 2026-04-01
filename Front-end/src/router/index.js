@@ -23,6 +23,7 @@ const routes = [
       {
         path: 'dashboard',
         component: () => import('../views/DashboardView.vue'),
+        meta: { requiresAdmin: true },
         children: [
           {
             path: '',
@@ -64,12 +65,13 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
 
   if (to.meta.requiresAuth) {
-    if (!authStore.isAuthenticated) {
-      // Token expirado ou ausente: redireciona para login
-      next({ name: 'Login' })
-    } else {
-      next()
-    }
+      if (!authStore.isAuthenticated) {
+        next({ name: 'Login' })
+      } else if (to.matched.some(record => record.meta.requiresAdmin) && !authStore.isAdmin) {
+        next({ name: 'Gerenciamento' })
+      } else {
+        next()
+      }
   } else if (to.meta.requiresGuest) {
     if (authStore.isAuthenticated) {
       next({ name: 'Gerenciamento' })

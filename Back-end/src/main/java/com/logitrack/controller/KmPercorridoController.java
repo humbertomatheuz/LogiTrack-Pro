@@ -6,7 +6,7 @@ import com.logitrack.service.KmPercorridoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-// Removed PreAuthorize temporarily until we check security context but rules say "Acesso Restrito: A visualização detalhada deve exigir que o usuário esteja devidamente autenticado". This is handled by generic security filters if mapped under /api.
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/km-percorrido")
+@PreAuthorize("hasRole('ADMIN')")
 public class KmPercorridoController {
 
     @Autowired
