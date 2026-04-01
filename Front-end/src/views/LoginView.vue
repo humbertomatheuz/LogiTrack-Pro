@@ -38,7 +38,7 @@
         <div v-if="errorMessage" class="logi-alert mb-4" role="alert">
           <span class="material-symbols-outlined logi-alert__icon">error</span>
           <div>
-            <p class="logi-alert__title">Credenciais inválidas</p>
+            <p class="logi-alert__title">{{ errorMessage.includes('servidor') ? 'Status do Servidor' : 'Credenciais Inválidas' }}</p>
             <p class="logi-alert__sub">{{ errorMessage }}</p>
           </div>
         </div>
@@ -163,8 +163,14 @@ async function handleLogin() {
     await authStore.login({ login: form.value.login, senha: form.value.senha })
     router.push('/gerenciamento')
   } catch (err) {
-    // Mensagem genérica conforme HU01 (não expõe qual campo está errado)
-    errorMessage.value = 'Por favor, verifique seus dados e tente novamente.'
+    // Se o erro for de rede (ex: timeout ou servidor offline no Render)
+    if (!err.response) {
+      errorMessage.value = 'O servidor está iniciando (Cold Start). Por favor, aguarde cerca de 60 segundos e tente novamente.'
+    } else if (err.response.status === 401 || err.response.status === 403) {
+      errorMessage.value = 'Usuário ou senha incorretos. Por favor, verifique seus dados.'
+    } else {
+      errorMessage.value = 'Ocorreu um erro inesperado. Tente novamente em instantes.'
+    }
   } finally {
     loading.value = false
   }

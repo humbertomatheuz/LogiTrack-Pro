@@ -2,12 +2,21 @@
 
 Sistema de gerenciamento de frota que centraliza controle de manutenções, viagens e análises operacionais em um painel único.
 
-> **⚠️ Ambiente recomendado: Linux nativo.**
-> Rodar em Linux (ou WSL2 com arquivos no filesystem Linux, ex: `/home/` ou `/root/`) garante hot-reload funcional, melhor performance de I/O e evita problemas com `inotify` do sistema de arquivos 9P do Windows.
+---
+
+## 🌍 Live Demo (Produção)
+
+| Componente | Link | Status |
+|---|---|---|
+| **Frontend (Web)** | [https://logitrack-pro-7gm.pages.dev](https://logitrack-pro-7gm.pages.dev) | **Live** |
+| **Backend (API)** | [https://logitrack-pro-xckv.onrender.com](https://logitrack-pro-xckv.onrender.com) | **Ativo** |
+
+> **⚠️ Importante sobre o Acesso:**
+> O Back-end está hospedado no plano gratuito do **Render**. Se o sistema não for acessado por um tempo, o servidor "dorme". Ao abrir o site pela primeira vez, pode haver um **atraso de 30 a 60 segundos** para o backend "acordar" e carregar os dados.
 
 ---
 
-## ✅ Pré-requisitos
+## ✅ Pré-requisitos (Local)
 
 - **Docker** 24+ e **Docker Compose** v2
 - **Git**
@@ -48,11 +57,19 @@ docker compose down -v
 
 ## 🌐 Endpoints
 
+### Local (Docker)
 | Serviço | URL |
 |---|---|
 | Frontend | http://localhost:3000 |
 | API Backend | http://localhost:8080 |
 | PostgreSQL | `localhost:5444` |
+
+### Nuvem (Produção)
+| Serviço | URL | Hospedagem |
+|---|---|---|
+| Frontend | [logitrack-pro-7gm.pages.dev](https://logitrack-pro-7gm.pages.dev) | Cloudflare Pages |
+| API Backend | [logitrack-pro-xckv.onrender.com](https://logitrack-pro-xckv.onrender.com) | Render |
+| Base de Dados | Managed PostgreSQL | Render |
 
 ---
 
@@ -143,4 +160,18 @@ docker compose down -v && docker compose up --build
 
 ---
 
-*LogiTrack Pro v1.0 — 31 de março de 2026*
+## ☁️ Deploy na Nuvem (Detalhes)
+
+### Back-end (Render)
+- **Tecnologia:** Docker (Multi-stage build).
+- **Banco:** Managed PostgreSQL do Render.
+- **Configuração:** O arquivo [`render.yaml`](./render.yaml) define o Blueprint para deploy automático.
+- **Variáveis de Ambiente:** `SPRING_DATASOURCE_URL` (com prefixo `jdbc:`), `JWT_SECRET` e `SPRING_JPA_HIBERNATE_DDL_AUTO=update`.
+
+### Front-end (Cloudflare Pages)
+- **Tecnologia:** Static Site (Assets compilados via Vite).
+- **Integração:** Conectado via Git. Variável `VITE_API_URL` aponta para a URL do Render.
+
+---
+
+*LogiTrack Pro v1.1 — 01 de abril de 2026*
