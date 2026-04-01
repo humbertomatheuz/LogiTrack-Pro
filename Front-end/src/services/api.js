@@ -1,7 +1,10 @@
 import axios from 'axios'
 
+const baseURL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+console.log('LOGITRACK_DEBUG: API Base URL is:', baseURL)
+
 const api = axios.create({
-  baseURL: (import.meta.env.VITE_API_URL || '').replace(/\/$/, ''),
+  baseURL,
   headers: {
     'Content-Type': 'application/json'
   }
