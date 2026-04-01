@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import axios from 'axios'
+import api from '../services/api'
 import router from '../router'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -48,7 +48,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function login(loginData) {
-    const response = await axios.post('/api/auth/login', loginData)
+    const response = await api.post('/api/auth/login', loginData)
     setSession(response.data)
     return response.data
   }
