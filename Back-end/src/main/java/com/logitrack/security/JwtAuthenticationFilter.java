@@ -38,6 +38,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // Sliding Expiration: Renova automaticamente o JWT por mais 5 minutos (300000ms)
+            String newToken = jwtTokenProvider.generateTokenWithExpiration(login, 300000);
+            response.setHeader("x-new-token", newToken);
+            response.addHeader("Access-Control-Expose-Headers", "x-new-token");
         }
 
         filterChain.doFilter(request, response);

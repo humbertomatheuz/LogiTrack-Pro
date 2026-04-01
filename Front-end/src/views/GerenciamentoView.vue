@@ -15,35 +15,13 @@
 
           <form @submit.prevent="handleSubmit" novalidate>
 
-            <!-- Veículo -->
-            <div class="field-group autocomplete-group">
-              <label for="veiculo-input" class="field-label">Veículo (Busca)</label>
-              <div class="input-wrapper" style="position: relative;">
-                <input
-                  id="veiculo-input"
-                  type="text"
-                  v-model="veiculoSearch"
-                  @focus="showVeiculoDropdown = true"
-                  @blur="handleVeiculoBlur"
-                  placeholder="Busque por placa ou modelo..."
-                  class="field-input"
-                  :class="{ 'field-error': errors.veiculoId }"
-                  autocomplete="off"
-                />
-                <span class="material-symbols-outlined select-arrow" style="pointer-events: none; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted);">search</span>
-                
-                <ul v-if="showVeiculoDropdown && filteredVeiculos.length > 0" class="autocomplete-dropdown">
-                  <li v-for="v in filteredVeiculos" :key="v.id" @mousedown.prevent="selectVeiculo(v)" class="autocomplete-item">
-                    <span class="ac-placa">{{ v.placa }}</span> <span class="ac-modelo">{{ v.modelo }}</span>
-                  </li>
-                </ul>
-                
-                <ul v-else-if="showVeiculoDropdown && filteredVeiculos.length === 0" class="autocomplete-dropdown empty-dropdown">
-                  <li class="autocomplete-item autocomplete-item--empty">Nenhum veículo encontrado</li>
-                </ul>
-              </div>
-              <p v-if="errors.veiculoId" class="field-error-msg">{{ errors.veiculoId }}</p>
-            </div>
+            <!-- Veículo Autocomplete -->
+            <VeiculoAutocomplete
+              id="veiculo-input"
+              v-model="form.veiculoId"
+              :error="errors.veiculoId"
+              @select="selectVeiculoObj"
+            />
 
             <!-- Datas -->
             <div class="field-row">
@@ -272,6 +250,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useMaintenanceStore } from '../stores/maintenance'
+import VeiculoAutocomplete from '../components/common/VeiculoAutocomplete.vue'
 
 const authStore = useAuthStore()
 const store = useMaintenanceStore()
@@ -291,27 +270,8 @@ const editMode = ref(false)
 const editId = ref(null)
 const submitting = ref(false)
 
-const veiculoSearch = ref('')
-const showVeiculoDropdown = ref(false)
-
-const filteredVeiculos = computed(() => {
-  const query = veiculoSearch.value.toLowerCase()
-  if (!query) return store.veiculos
-  return store.veiculos.filter(v => 
-    v.placa.toLowerCase().includes(query) || 
-    v.modelo.toLowerCase().includes(query)
-  )
-})
-
-function selectVeiculo(v) {
-  form.value.veiculoId = v.id
-  veiculoSearch.value = `${v.placa} — ${v.modelo}`
-  showVeiculoDropdown.value = false
+function selectVeiculoObj(v) {
   if (errors.value.veiculoId) delete errors.value.veiculoId
-}
-
-function handleVeiculoBlur() {
-  setTimeout(() => { showVeiculoDropdown.value = false }, 200)
 }
 
 // ── Delete ──────────────────────────────────────────────
@@ -448,7 +408,6 @@ async function handleSubmit() {
 
 function resetForm() {
   form.value = blankForm()
-  veiculoSearch.value = ''
   errors.value = {}
   editMode.value = false
   editId.value = null
@@ -463,8 +422,6 @@ function startEdit(m) {
     custoEstimado: m.custoEstimado,
     status: m.status,
   }
-  const v = store.veiculos.find(v => v.id === m.veiculoId)
-  veiculoSearch.value = v ? `${v.placa} — ${v.modelo}` : `#${m.veiculoId}`
   editMode.value = true
   editId.value = m.id
   scrollToForm()

@@ -5,15 +5,6 @@
       <h1 class="welcome-title mb-0">Dashboard Data Analytics</h1>
     </div>
 
-    <!-- Filtros Globais (apenas demonstração visual conforme HU03) -->
-    <div class="d-flex justify-content-end mb-3">
-      <select class="form-select form-select-sm w-auto shadow-sm" v-model="globalPeriod" @change="updateGlobalFilter">
-        <option value="last-7-days">Últimos 7 dias</option>
-        <option value="this-month">Este Mês</option>
-        <option value="this-year">Este Ano</option>
-      </select>
-    </div>
-
     <!-- Navegação em Abas (Nav Tabs do Bootstrap 5) -->
     <ul class="nav nav-tabs custom-nav-tabs" role="tablist">
       <li class="nav-item" v-for="tab in tabs" :key="tab.id" role="presentation">

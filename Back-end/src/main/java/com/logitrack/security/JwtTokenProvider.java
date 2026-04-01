@@ -20,8 +20,12 @@ public class JwtTokenProvider {
     private long jwtExpiration;
 
     public String generateToken(String login) {
+        return generateTokenWithExpiration(login, jwtExpiration);
+    }
+
+    public String generateTokenWithExpiration(String login, long expirationMs) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpiration);
+        Date expiryDate = new Date(now.getTime() + expirationMs);
 
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 
