@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: logitrack-db
+    restart: always
+    environment:
+      POSTGRES_USER: logi_user
+      POSTGRES_PASSWORD: logi_password
+      POSTGRES_DB: logitrack_db
+    ports:
+      - '5444:5432' # Usando a 5444 para não brigar com seus outros projetos
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - logitrack_data:/var/lib/postgresql/data
+    networks:
+      - logitrack_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U logi_user -d logitrack_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  logitrack_network:
+    driver: bridge
+
+volumes:
+  logitrack_data:
