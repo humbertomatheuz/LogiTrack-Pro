@@ -1,10 +1,5 @@
 <template>
   <div class="dashboard-wrapper container-fluid pt-4">
-    <div class="d-flex align-items-center mb-4">
-      <span class="material-symbols-outlined dashboard-icon me-2">dashboard</span>
-      <h1 class="welcome-title mb-0">Dashboard Data Analytics</h1>
-    </div>
-
     <!-- Navegação em Abas (Nav Tabs do Bootstrap 5) -->
     <ul class="nav nav-tabs custom-nav-tabs" role="tablist">
       <li class="nav-item" v-for="tab in tabs" :key="tab.id" role="presentation">
@@ -38,10 +33,8 @@ const dashboardStore = useDashboardStore();
 const globalPeriod = ref(dashboardStore.globalFilters.period);
 
 const tabs = [
-  { id: 'km-percorrido', title: 'KM Percorrido e Ranking', routeName: 'DashboardKmPercorrido', icon: 'route' },
-  { id: 'volume-categoria', title: 'Volume por Categoria', routeName: 'DashboardVolumeCategoria', icon: 'bar_chart' },
-  { id: 'cronograma-manutencao', title: 'Manutenção', routeName: 'DashboardCronogramaManutencao', icon: 'build' },
-  { id: 'projecao-financeira', title: 'Financeiro', routeName: 'DashboardProjecaoFinanceira', icon: 'attach_money' }
+  { id: 'dados-frota', title: 'Dados da Frota', routeName: 'DashboardFrota', icon: 'route' },
+  { id: 'projecao-financeira', title: 'Dados Financeiros', routeName: 'DashboardProjecaoFinanceira', icon: 'payments' }
 ];
 
 // Sincronizar store com a rota atual ao carregar ou navegar

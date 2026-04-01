@@ -1,5 +1,5 @@
 <template>
-  <div class="km-percorrido-wrapper">
+  <div class="dados-frota-wrapper">
     
     <!-- Filters Top Bar -->
     <div class="filters-card">
@@ -55,6 +55,20 @@
         <h2 class="card-value filtered-value">{{ formatKm(store.kmFiltrado) }}</h2>
         <p class="card-caption filtered-caption">Referente ao período selecionado</p>
       </div>
+
+      <!-- Volume Leve Card -->
+      <div class="indicator-card card-filtered">
+        <h3 class="card-subtitle filtered-subtitle">TOTAL DE VIAGENS VEÍCULOS LEVES</h3>
+        <h2 class="card-value filtered-value">{{ store.volumeLeve }}</h2>
+        <p class="card-caption filtered-caption">Quantidade de viagens</p>
+      </div>
+
+      <!-- Volume Pesado Card -->
+      <div class="indicator-card card-filtered">
+        <h3 class="card-subtitle filtered-subtitle">TOTAL DE VIAGENS VEÍCULOS PESADOS</h3>
+        <h2 class="card-value filtered-value">{{ store.volumePesado }}</h2>
+        <p class="card-caption filtered-caption">Quantidade de viagens</p>
+      </div>
     </div>
 
     <!-- Data Table Card -->
@@ -68,6 +82,7 @@
               <th>TIPO</th>
               <th>ANO</th>
               <th>KM TOTAL</th>
+              <th>VIAGENS</th>
               <th class="text-right">AÇÕES</th>
             </tr>
           </thead>
@@ -80,6 +95,7 @@
               </td>
               <td class="col-ano">{{ v.ano }}</td>
               <td class="col-km">{{ formatNumber(v.kmTotal) }} km</td>
+              <td class="col-viagens">{{ v.totalViagens || 0 }}</td>
               <td class="text-right">
                 <button class="btn-action" title="Ver Detalhes" @click="openModal(v.id)">
                   <span class="material-symbols-outlined icon-action">visibility</span>
@@ -87,7 +103,7 @@
               </td>
             </tr>
             <tr v-if="store.veiculos.length === 0">
-              <td colspan="6" class="text-center py-4 text-muted">Ainda não há veículos cadastrados ou correspondentes ao filtro.</td>
+              <td colspan="7" class="text-center py-4 text-muted">Ainda não há veículos cadastrados ou correspondentes ao filtro.</td>
             </tr>
           </tbody>
         </table>
@@ -202,7 +218,7 @@ onMounted(async () => {
 
 <style scoped>
 /* ── Variables & Typography ───────────────────────── */
-.km-percorrido-wrapper {
+.dados-frota-wrapper {
   font-family: 'Inter', 'Manrope', -apple-system, sans-serif;
   color: #1a1a2e;
   animation: fadeIn 0.3s ease-out;
@@ -315,9 +331,12 @@ onMounted(async () => {
 /* ── Cards Row ────────────────────────────────────── */
 .cards-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 1.5rem;
   margin: 0 1rem 2rem 1rem;
+}
+@media (max-width: 1200px) {
+  .cards-row { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 768px) {
   .cards-row { grid-template-columns: 1fr; }
@@ -442,6 +461,11 @@ onMounted(async () => {
   color: #4b5563;
 }
 .col-km {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #1f2937;
+}
+.col-viagens {
   font-weight: 700;
   font-size: 0.85rem;
   color: #1f2937;

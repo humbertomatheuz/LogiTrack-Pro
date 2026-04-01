@@ -12,5 +12,7 @@ import org.springframework.data.domain.Page;
 public class KmPercorridoResponseDTO {
     private Double kmTotalFrota;
     private Double kmFiltrado;
+    private Long volumeLeve;
+    private Long volumePesado;
     private Page<VeiculoKmProjection> grid;
 }

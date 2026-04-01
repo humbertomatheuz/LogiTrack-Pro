@@ -26,24 +26,18 @@ const routes = [
         children: [
           {
             path: '',
-            redirect: '/dashboard/km-percorrido'
+            redirect: '/dashboard/dados-frota'
           },
           {
-            path: 'km-percorrido',
-            name: 'DashboardKmPercorrido',
-            component: () => import('../views/dashboard/KmPercorrido.vue')
+            path: 'dados-frota',
+            name: 'DashboardFrota',
+            component: () => import('../views/dashboard/DadosFrota.vue')
           },
           {
             path: 'volume-categoria',
             name: 'DashboardVolumeCategoria',
             component: () => import('../views/dashboard/VolumeCategoria.vue')
           },
-          {
-            path: 'cronograma-manutencao',
-            name: 'DashboardCronogramaManutencao',
-            component: () => import('../views/dashboard/CronogramaManutencao.vue')
-          },
-
           {
             path: 'projecao-financeira',
             name: 'DashboardProjecaoFinanceira',

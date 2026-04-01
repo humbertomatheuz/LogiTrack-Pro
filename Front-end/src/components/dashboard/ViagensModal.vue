@@ -309,6 +309,11 @@ onUnmounted(() => {
 
 .table-responsive {
   width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 500px;
+  border: 1px solid #f3f4f6;
+  border-radius: 8px;
 }
 
 .data-table {
@@ -332,6 +337,10 @@ onUnmounted(() => {
   letter-spacing: 0.05em;
   background: #f8fafc;
   cursor: default;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: inset 0 -1px 0 #f3f4f6;
 }
 
 .data-table th.sortable {

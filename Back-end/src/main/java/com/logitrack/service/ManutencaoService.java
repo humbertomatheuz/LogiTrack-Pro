@@ -1,6 +1,8 @@
 package com.logitrack.service;
 
 import com.logitrack.dto.ManutencaoDTO;
+import com.logitrack.dto.CronogramaManutencaoDTO;
+import com.logitrack.dto.CronogramaPaginadoDTO;
 import com.logitrack.model.Manutencao;
 import com.logitrack.model.Veiculo;
 import com.logitrack.repository.ManutencaoRepository;
@@ -38,6 +40,30 @@ public class ManutencaoService {
         }));
 
         return manutencoes;
+    }
+
+    // HU06: Cronograma - busca manutenções pendentes de forma performática via SQL (JOIN + LIMIT/OFFSET)
+    public CronogramaPaginadoDTO buscarCronogramaPendentes(int skip, int limit) {
+        // Busca fragmento via SQL Nativo
+        List<Map<String, Object>> results = manutencaoRepository.findCronogramaPendentesNative(skip, limit);
+        long totalElements = manutencaoRepository.countPendentesNative();
+        
+        int logicalPage = (int) Math.ceil((double) skip / limit);
+        int totalPages = (int) Math.ceil((double) totalElements / limit);
+        
+        // Converte resultados brutos do mapa SQL para DTOs
+        List<CronogramaManutencaoDTO> content = results.stream()
+                .map(this::toCronogramaDTOFromMap)
+                .collect(Collectors.toList());
+        
+        CronogramaPaginadoDTO result = new CronogramaPaginadoDTO();
+        result.setContent(content);
+        result.setTotalElements(totalElements);
+        result.setCurrentPage(logicalPage);
+        result.setPageSize(limit);
+        result.setTotalPages(totalPages);
+        result.setHasNext((skip + limit) < totalElements);
+        return result;
     }
 
     @Transactional
@@ -123,6 +149,48 @@ public class ManutencaoService {
         dto.setTipoServico(m.getTipoServico());
         dto.setCustoEstimado(m.getCustoEstimado());
         dto.setStatus(m.getStatus());
+        return dto;
+    }
+
+    // Converte para DTO de cronograma com dados do veículo (placa e modelo)
+    private CronogramaManutencaoDTO toCronogramaDTO(Manutencao m) {
+        CronogramaManutencaoDTO dto = new CronogramaManutencaoDTO();
+        dto.setId(m.getId());
+        dto.setVeiculoId(m.getVeiculo().getId());
+        dto.setPlaca(m.getVeiculo().getPlaca());
+        dto.setModelo(m.getVeiculo().getModelo());
+        dto.setDataInicio(m.getDataInicio());
+        dto.setDataFinalizacao(m.getDataFinalizacao());
+        dto.setTipoServico(m.getTipoServico());
+        dto.setCustoEstimado(m.getCustoEstimado());
+        dto.setStatus(m.getStatus());
+        return dto;
+    }
+
+    private CronogramaManutencaoDTO toCronogramaDTOFromMap(Map<String, Object> map) {
+        CronogramaManutencaoDTO dto = new CronogramaManutencaoDTO();
+        dto.setId(((Number) map.get("id")).longValue());
+        dto.setVeiculoId(((Number) map.get("veiculo_id")).longValue());
+        dto.setPlaca((String) map.get("placa"));
+        dto.setModelo((String) map.get("modelo"));
+        
+        // PostgreSQL Date handling or JDBC Map handling
+        Object dStart = map.get("data_inicio");
+        if (dStart instanceof java.sql.Date) dto.setDataInicio(((java.sql.Date) dStart).toLocalDate());
+        else if (dStart instanceof java.time.LocalDate) dto.setDataInicio((java.time.LocalDate) dStart);
+
+        Object dEnd = map.get("data_finalizacao");
+        if (dEnd instanceof java.sql.Date) dto.setDataFinalizacao(((java.sql.Date) dEnd).toLocalDate());
+        else if (dEnd instanceof java.time.LocalDate) dto.setDataFinalizacao((java.time.LocalDate) dEnd);
+
+        dto.setTipoServico((String) map.get("tipo_servico"));
+        
+        Object custo = map.get("custo_estimado");
+        if (custo != null) {
+            dto.setCustoEstimado(new java.math.BigDecimal(custo.toString()));
+        }
+        
+        dto.setStatus((String) map.get("status"));
         return dto;
     }
 }

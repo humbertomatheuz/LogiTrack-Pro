@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 export const useDashboardStore = defineStore('dashboard', {
   state: () => ({
-    activeTab: 'km-percorrido',
+    activeTab: 'dados-frota',
     globalFilters: {
       period: 'last-7-days',
       // Outros filtros globais podem ser adicionados aqui

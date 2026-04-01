@@ -8,6 +8,16 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
   const loading = ref(false)
   const loadingVeiculos = ref(false)
   const error = ref(null)
+  
+  // ── Cronograma (HU06) - Manutenções pendentes com paginação ─────
+  const cronograma = ref([])
+  const cronogramaLoading = ref(false)
+  const cronogramaError = ref(null)
+  const cronogramaPaginaAtual = ref(0)
+  const cronogramaItensPorPagina = ref(10)
+  const cronogramaTotalElements = ref(0)
+  const cronogramaTotalPages = ref(0)
+  const cronogramaHasNext = ref(false)
 
   // ── Manutenções ──────────────────────────────────────────
   async function fetchManutencoes() {
@@ -55,16 +65,94 @@ export const useMaintenanceStore = defineStore('maintenance', () => {
     }
   }
 
+  // ── Cronograma Paginado (HU06) - Usa endpoint /api/manutencoes/cronograma ──
+  // HU06: Carrega primeiras 5 manutenções pendentes
+  async function fetchCronograma() {
+    cronogramaLoading.value = true
+    cronogramaError.value = null
+    cronogramaPaginaAtual.value = 0
+    cronograma.value = []
+    
+    try {
+      const response = await api.get('/api/manutencoes/cronograma', {
+        params: {
+          skip: 0, // Começa do item 0
+          limit: 5 // Primeira carga com 5 itens
+        }
+      })
+      
+      // Response agora é CronogramaPaginadoDTO com structure:
+      // { content: [...], totalElements, currentPage, pageSize, totalPages, hasNext }
+      const paginatedData = response.data
+      cronograma.value = paginatedData.content || []
+      cronogramaTotalElements.value = paginatedData.totalElements || 0
+      cronogramaTotalPages.value = paginatedData.totalPages || 0
+      cronogramaHasNext.value = paginatedData.hasNext || false
+      cronogramaPaginaAtual.value = paginatedData.currentPage || 0
+    } catch (err) {
+      cronogramaError.value = err.response?.data?.message || 'Erro ao carregar cronograma.'
+      console.error('Erro fetchCronograma:', err)
+    } finally {
+      cronogramaLoading.value = false
+    }
+  }
+
+  // HU06: Carrega mais 10 itens acumulativamente
+  async function carregarMaisCronograma() {
+    if (cronogramaLoading.value) return
+    
+    cronogramaLoading.value = true
+    cronogramaError.value = null
+    
+    try {
+      // skip = quantidade de itens já carregados (ponto de partida)
+      const skip = cronograma.value.length
+      const response = await api.get('/api/manutencoes/cronograma', {
+        params: {
+          skip: skip, // Pula até onde parou
+          limit: 10 // Próximas cargas com 10 itens
+        }
+      })
+      
+      const paginatedData = response.data
+      const novosDados = paginatedData.content || []
+      
+      // Adiciona apenas se houver dados
+      if (Array.isArray(novosDados) && novosDados.length > 0) {
+        cronograma.value = cronograma.value.concat(novosDados)
+        cronogramaTotalElements.value = paginatedData.totalElements || 0
+        cronogramaTotalPages.value = paginatedData.totalPages || 0
+        cronogramaHasNext.value = paginatedData.hasNext || false
+        cronogramaPaginaAtual.value = paginatedData.currentPage || 0
+      }
+    } catch (err) {
+      cronogramaError.value = err.response?.data?.message || 'Erro ao carregar mais itens.'
+      console.error('Erro carregarMaisCronograma:', err)
+    } finally {
+      cronogramaLoading.value = false
+    }
+  }
+
   return {
     manutencoes,
     veiculos,
     loading,
     loadingVeiculos,
     error,
+    cronograma,
+    cronogramaLoading,
+    cronogramaError,
+    cronogramaPaginaAtual,
+    cronogramaItensPorPagina,
+    cronogramaTotalElements,
+    cronogramaTotalPages,
+    cronogramaHasNext,
     fetchManutencoes,
     createManutencao,
     updateManutencao,
     deleteManutencao,
     fetchVeiculos,
+    fetchCronograma,
+    carregarMaisCronograma,
   }
 })

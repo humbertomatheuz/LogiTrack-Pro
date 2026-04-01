@@ -30,6 +30,10 @@ public class KmPercorridoService {
                 dataFim
         );
 
+        // Contar viagens por tipo
+        Long volumeLeve = viagemRepository.countViagensPorTipo("LEVE", dataInicio, dataFim);
+        Long volumePesado = viagemRepository.countViagensPorTipo("PESADO", dataInicio, dataFim);
+
         Pageable pageable = PageRequest.of(page, size);
 
         Page<VeiculoKmProjection> grid = viagemRepository.findVeiculosKmPaginado(
@@ -40,7 +44,7 @@ public class KmPercorridoService {
                 pageable
         );
 
-        return new KmPercorridoResponseDTO(kmTotalHistorico, kmFiltrado, grid);
+        return new KmPercorridoResponseDTO(kmTotalHistorico, kmFiltrado, volumeLeve, volumePesado, grid);
     }
     
     // Lazy loading for explicit modal demand (HU09)

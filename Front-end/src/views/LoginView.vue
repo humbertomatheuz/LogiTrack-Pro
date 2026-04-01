@@ -66,7 +66,6 @@
           <div class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <label for="senha" class="logi-label mb-0">Senha</label>
-              <a href="#" class="logi-link">Esqueceu a senha?</a>
             </div>
             <div class="logi-input-group">
               <span class="logi-input-icon material-symbols-outlined">lock</span>

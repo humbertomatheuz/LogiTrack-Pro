@@ -1,15 +1,17 @@
 package com.logitrack.controller;
 
 import com.logitrack.dto.ManutencaoDTO;
+import com.logitrack.dto.CronogramaManutencaoDTO;
+import com.logitrack.dto.CronogramaPaginadoDTO;
 import com.logitrack.service.ManutencaoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/manutencoes")
@@ -22,6 +24,16 @@ public class ManutencaoController {
     @GetMapping
     public List<ManutencaoDTO> listar() {
         return manutencaoService.listarTodas();
+    }
+
+    // HU06: Endpoint cronograma - retorna manutenções PENDENTES com paginação
+    // skip: número de itens a pular (offset)
+    // limit: quantos itens retornar (tamanho da página)
+    @GetMapping("/cronograma")
+    public CronogramaPaginadoDTO obterCronograma(
+            @RequestParam(defaultValue = "0") int skip,
+            @RequestParam(defaultValue = "10") int limit) {
+        return manutencaoService.buscarCronogramaPendentes(skip, limit);
     }
 
     @PostMapping

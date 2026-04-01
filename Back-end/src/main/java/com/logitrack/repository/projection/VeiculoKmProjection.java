@@ -7,4 +7,5 @@ public interface VeiculoKmProjection {
     String getTipo();
     Integer getAno();
     Double getKmTotal();
+    Long getTotalViagens();
 }

@@ -31,7 +31,8 @@ public interface ViagemRepository extends JpaRepository<Viagem, Long> {
                          @Param("dataFim") LocalDate dataFim);
 
     @Query(value = "SELECT ve.id AS id, ve.placa AS placa, ve.modelo AS modelo, ve.tipo AS tipo, " +
-                   "ve.ano AS ano, COALESCE(SUM(v.km_percorrida), 0) AS kmTotal " +
+                   "ve.ano AS ano, COALESCE(SUM(v.km_percorrida), 0) AS kmTotal, " +
+                   "COUNT(v.id) AS totalViagens " +
                    "FROM veiculos ve " +
                    "LEFT JOIN viagens v ON v.veiculo_id = ve.id " +
                    "AND (CAST(:dataInicio AS DATE) IS NULL OR v.data_saida >= CAST(:dataInicio AS DATE)) " +
@@ -52,4 +53,15 @@ public interface ViagemRepository extends JpaRepository<Viagem, Long> {
 
     // Endpoint for detailed modal (lazy loaded)
     List<Viagem> findByVeiculoIdOrderByDataSaidaDesc(Long veiculoId);
+
+    // Query para contar viagens por tipo de veículo
+    @Query(value = "SELECT COUNT(v.id) FROM viagens v " +
+                   "JOIN veiculos ve ON v.veiculo_id = ve.id " +
+                   "WHERE UPPER(ve.tipo) = UPPER(:tipo) " +
+                   "AND (CAST(:dataInicio AS DATE) IS NULL OR v.data_saida >= CAST(:dataInicio AS DATE)) " +
+                   "AND (CAST(:dataFim AS DATE) IS NULL OR v.data_chegada <= CAST(:dataFim AS DATE))",
+           nativeQuery = true)
+    Long countViagensPorTipo(@Param("tipo") String tipo,
+                             @Param("dataInicio") LocalDate dataInicio,
+                             @Param("dataFim") LocalDate dataFim);
 }

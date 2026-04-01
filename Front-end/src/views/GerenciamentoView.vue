@@ -195,10 +195,6 @@
       </main>
     </div>
 
-    <!-- FAB -->
-    <button class="fab" @click="scrollToForm" title="Nova ordem de serviço">
-      <span class="material-symbols-outlined">add</span>
-    </button>
 
     <!-- ═══════════════ DELETE CONFIRM MODAL ═══════════════ -->
     <div v-if="showDeleteModal" class="modal-overlay" @click.self="showDeleteModal = false">
@@ -458,7 +454,7 @@ function scrollToForm() {
 
 function exportCSV() {
   const headers = ['ID', 'Placa', 'Veículo (Modelo)', 'Serviço', 'Custo Estimado', 'Data Início', 'Data Fim', 'Status']
-  const rows = store.manutencoes.map(m => [
+  const rows = filteredManutencoes.value.map(m => [
     m.id,
     getVeiculoPlaca(m.veiculoId),
     getVeiculoModelo(m.veiculoId),
@@ -976,25 +972,6 @@ onMounted(async () => {
 
 
 
-/* ══════════════════════════════════════════
-   FAB
-══════════════════════════════════════════ */
-.fab {
-  position: fixed;
-  bottom: 1.75rem;
-  right: 1.75rem;
-  width: 3.25rem; height: 3.25rem;
-  background: linear-gradient(135deg, #1A237E, #2D3AAF);
-  color: white;
-  border: none; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgba(26,35,126,.4);
-  transition: all .25s ease;
-  z-index: 90;
-}
-.fab:hover { transform: scale(1.1) translateY(-2px); box-shadow: 0 14px 32px rgba(26,35,126,.5); }
-.fab .material-symbols-outlined { font-size: 1.5rem; }
 
 /* ══════════════════════════════════════════
    DELETE MODAL

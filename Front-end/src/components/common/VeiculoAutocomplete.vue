@@ -79,7 +79,7 @@ watch(() => props.modelValue, (newVal) => {
 }, { immediate: true })
 
 watch(veiculoSearch, (val) => {
-  // Always update modelValue with what is being searched so KmPercorrido can use it natively
+  // Always update modelValue with what is being searched so DadosFrota can use it natively
   if (showVeiculoDropdown.value) {
     emit('update:modelValue', val)
   }

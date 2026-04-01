@@ -15,7 +15,9 @@ export const useKmStore = defineStore('km', {
     paginaAtual: 1,
     itemsPorPagina: 10,
     kmTotalFrota: 0,
-    kmFiltradoResult: 0
+    kmFiltradoResult: 0,
+    volumeLeve: 0,
+    volumePesado: 0
   }),
   getters: {
     kmFiltrado(state) {
@@ -42,6 +44,8 @@ export const useKmStore = defineStore('km', {
         this.totalElementos = data.grid.totalElements || 0;
         this.kmTotalFrota = data.kmTotalFrota || 0;
         this.kmFiltradoResult = data.kmFiltrado || 0;
+        this.volumeLeve = data.volumeLeve || 0;
+        this.volumePesado = data.volumePesado || 0;
       } catch (err) {
         console.error('Erro ao processar resumo KM:', err);
       } finally {
