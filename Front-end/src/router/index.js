@@ -22,8 +22,38 @@ const routes = [
       },
       {
         path: 'dashboard',
-        name: 'Dashboard',
-        component: () => import('../views/DashboardView.vue')
+        component: () => import('../views/DashboardView.vue'),
+        children: [
+          {
+            path: '',
+            redirect: '/dashboard/km-percorrido'
+          },
+          {
+            path: 'km-percorrido',
+            name: 'DashboardKmPercorrido',
+            component: () => import('../views/dashboard/KmPercorrido.vue')
+          },
+          {
+            path: 'volume-categoria',
+            name: 'DashboardVolumeCategoria',
+            component: () => import('../views/dashboard/VolumeCategoria.vue')
+          },
+          {
+            path: 'cronograma-manutencao',
+            name: 'DashboardCronogramaManutencao',
+            component: () => import('../views/dashboard/CronogramaManutencao.vue')
+          },
+          {
+            path: 'ranking-utilizacao',
+            name: 'DashboardRankingUtilizacao',
+            component: () => import('../views/dashboard/RankingUtilizacao.vue')
+          },
+          {
+            path: 'projecao-financeira',
+            name: 'DashboardProjecaoFinanceira',
+            component: () => import('../views/dashboard/ProjecaoFinanceira.vue')
+          }
+        ]
       },
       {
         path: 'gerenciamento',

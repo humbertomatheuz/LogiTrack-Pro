@@ -16,17 +16,31 @@
           <form @submit.prevent="handleSubmit" novalidate>
 
             <!-- Veículo -->
-            <div class="field-group">
-              <label for="veiculo" class="field-label">Veículo</label>
-              <div class="select-wrapper">
-                <select id="veiculo" v-model="form.veiculoId" class="field-select"
-                  :class="{ 'field-error': errors.veiculoId }" required>
-                  <option value="">Selecione o veículo...</option>
-                  <option v-for="v in store.veiculos" :key="v.id" :value="v.id">
-                    {{ v.placa }} — {{ v.modelo }}
-                  </option>
-                </select>
-                <span class="material-symbols-outlined select-arrow">expand_more</span>
+            <div class="field-group autocomplete-group">
+              <label for="veiculo-input" class="field-label">Veículo (Busca)</label>
+              <div class="input-wrapper" style="position: relative;">
+                <input
+                  id="veiculo-input"
+                  type="text"
+                  v-model="veiculoSearch"
+                  @focus="showVeiculoDropdown = true"
+                  @blur="handleVeiculoBlur"
+                  placeholder="Busque por placa ou modelo..."
+                  class="field-input"
+                  :class="{ 'field-error': errors.veiculoId }"
+                  autocomplete="off"
+                />
+                <span class="material-symbols-outlined select-arrow" style="pointer-events: none; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted);">search</span>
+                
+                <ul v-if="showVeiculoDropdown && filteredVeiculos.length > 0" class="autocomplete-dropdown">
+                  <li v-for="v in filteredVeiculos" :key="v.id" @mousedown.prevent="selectVeiculo(v)" class="autocomplete-item">
+                    <span class="ac-placa">{{ v.placa }}</span> <span class="ac-modelo">{{ v.modelo }}</span>
+                  </li>
+                </ul>
+                
+                <ul v-else-if="showVeiculoDropdown && filteredVeiculos.length === 0" class="autocomplete-dropdown empty-dropdown">
+                  <li class="autocomplete-item autocomplete-item--empty">Nenhum veículo encontrado</li>
+                </ul>
               </div>
               <p v-if="errors.veiculoId" class="field-error-msg">{{ errors.veiculoId }}</p>
             </div>
@@ -200,40 +214,6 @@
             </table>
           </div>
         </div>
-
-        <!-- Bottom Row -->
-        <div class="bottom-row">
-          <!-- Upcoming Schedules -->
-          <div class="card-panel upcoming-card">
-            <div class="card-header-row">
-              <span class="material-symbols-outlined card-header-icon">calendar_clock</span>
-              <h2 class="card-title">Próximos Agendamentos</h2>
-            </div>
-            <div v-if="upcomingSchedules.length === 0" class="upcoming-empty">
-              <span class="material-symbols-outlined">event_busy</span>
-              <p>Nenhum agendamento futuro</p>
-            </div>
-            <ul v-else class="upcoming-list">
-              <li v-for="item in upcomingSchedules" :key="item.id" class="upcoming-item">
-                <span class="upcoming-dot" :class="statusClass(item.status)"></span>
-                <div class="upcoming-info">
-                  <p class="upcoming-title">{{ item.tipoServico }} – {{ getVeiculoPlaca(item.veiculoId) }}</p>
-                  <p class="upcoming-date">Agendado para {{ formatDate(item.dataInicio) }}</p>
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Location Banner -->
-          <div class="location-banner">
-            <div class="location-overlay"></div>
-            <div class="location-content">
-              <p class="location-label">Localização Oficina Central</p>
-              <p class="location-value">São Paulo, SP – Unidade 04</p>
-            </div>
-          </div>
-        </div>
-
       </main>
     </div>
 
@@ -310,6 +290,29 @@ const errors = ref({})
 const editMode = ref(false)
 const editId = ref(null)
 const submitting = ref(false)
+
+const veiculoSearch = ref('')
+const showVeiculoDropdown = ref(false)
+
+const filteredVeiculos = computed(() => {
+  const query = veiculoSearch.value.toLowerCase()
+  if (!query) return store.veiculos
+  return store.veiculos.filter(v => 
+    v.placa.toLowerCase().includes(query) || 
+    v.modelo.toLowerCase().includes(query)
+  )
+})
+
+function selectVeiculo(v) {
+  form.value.veiculoId = v.id
+  veiculoSearch.value = `${v.placa} — ${v.modelo}`
+  showVeiculoDropdown.value = false
+  if (errors.value.veiculoId) delete errors.value.veiculoId
+}
+
+function handleVeiculoBlur() {
+  setTimeout(() => { showVeiculoDropdown.value = false }, 200)
+}
 
 // ── Delete ──────────────────────────────────────────────
 const showDeleteModal = ref(false)
@@ -445,6 +448,7 @@ async function handleSubmit() {
 
 function resetForm() {
   form.value = blankForm()
+  veiculoSearch.value = ''
   errors.value = {}
   editMode.value = false
   editId.value = null
@@ -459,6 +463,8 @@ function startEdit(m) {
     custoEstimado: m.custoEstimado,
     status: m.status,
   }
+  const v = store.veiculos.find(v => v.id === m.veiculoId)
+  veiculoSearch.value = v ? `${v.placa} — ${v.modelo}` : `#${m.veiculoId}`
   editMode.value = true
   editId.value = m.id
   scrollToForm()
@@ -494,13 +500,15 @@ function scrollToForm() {
 }
 
 function exportCSV() {
-  const headers = ['ID', 'Veículo', 'Serviço', 'Data Início', 'Custo Estimado', 'Status']
+  const headers = ['ID', 'Placa', 'Veículo (Modelo)', 'Serviço', 'Custo Estimado', 'Data Início', 'Data Fim', 'Status']
   const rows = store.manutencoes.map(m => [
     m.id,
     getVeiculoPlaca(m.veiculoId),
+    getVeiculoModelo(m.veiculoId),
     m.tipoServico,
-    m.dataInicio,
     m.custoEstimado,
+    m.dataInicio,
+    m.dataFinalizacao || '',
     m.status,
   ])
   const csv = [headers, ...rows].map(r => r.join(',')).join('\n')
@@ -980,11 +988,8 @@ onMounted(async () => {
    BOTTOM ROW
 ══════════════════════════════════════════ */
 .bottom-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  display: block;
 }
-@media (max-width: 700px) { .bottom-row { grid-template-columns: 1fr; } }
 
 /* Upcoming */
 .upcoming-card { padding: 1.125rem; }
@@ -1012,41 +1017,7 @@ onMounted(async () => {
 .upcoming-title { font-size: 0.82rem; font-weight: 600; color: var(--text-main); margin: 0 0 0.1rem; }
 .upcoming-date { font-size: 0.72rem; color: var(--text-muted); margin: 0; }
 
-/* Location Banner */
-.location-banner {
-  position: relative;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  min-height: 140px;
-  background: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&auto=format&fit=crop&q=70')
-    center/cover no-repeat;
-}
-.location-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(10,15,60,0.82) 0%, rgba(26,35,126,0.65) 100%);
-}
-.location-content {
-  position: absolute;
-  bottom: 1.25rem;
-  left: 1.25rem;
-  color: white;
-}
-.location-label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: rgba(255,255,255,.7);
-  margin: 0 0 0.25rem;
-}
-.location-value {
-  font-size: 1rem;
-  font-weight: 800;
-  color: #ffffff;
-  margin: 0;
-  font-family: 'Manrope', sans-serif;
-}
+
 
 /* ══════════════════════════════════════════
    FAB
@@ -1183,5 +1154,55 @@ onMounted(async () => {
   border-radius: 50%;
   animation: spin .7s linear infinite;
   flex-shrink: 0;
+}
+
+/* Autocomplete Custom Styles */
+.autocomplete-group {
+  position: relative;
+}
+.autocomplete-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 50;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.autocomplete-item {
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.2s;
+}
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+.autocomplete-item:hover {
+  background: rgba(26,35,126,0.06);
+}
+.ac-placa {
+  font-weight: 700;
+  color: #1A237E;
+  margin-right: 0.5rem;
+}
+.ac-modelo {
+  color: var(--text-muted);
+}
+.autocomplete-item--empty {
+  color: var(--text-muted);
+  cursor: default;
+  font-style: italic;
+}
+.autocomplete-item--empty:hover {
+  background: transparent;
 }
 </style>
