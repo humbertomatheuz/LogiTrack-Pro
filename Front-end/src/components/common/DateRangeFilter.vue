@@ -67,4 +67,20 @@ function updateFim(e) {
   border-color: #1A237E;
   box-shadow: 0 0 0 2px rgba(26,35,126,0.1);
 }
+
+@media (max-width: 768px) {
+  .field-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .filter-group {
+    width: 100%;
+    min-width: 0;
+  }
+  
+  .filter-input {
+    padding-right: 0.35rem; /* Menor padding para acomodar ícone do iOS */
+  }
+}
 </style>

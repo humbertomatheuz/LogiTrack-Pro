@@ -9,21 +9,21 @@
           <div class="flex-grow-1">
             <label class="form-label small fw-bold text-uppercase">Período de Análise</label>
             <div class="filters-row">
-              <div class="flex-fill">
+              <div class="flex-fill-robust">
                 <label class="field-label">Data Início</label>
                 <input 
                   type="date" 
                   v-model="filtros.dataInicio" 
-                  class="form-control form-control-sm"
+                  class="form-control form-control-sm date-input-ios"
                   @change="validarDatas"
                 >
               </div>
-              <div class="flex-fill">
+              <div class="flex-fill-robust">
                 <label class="field-label">Data Fim</label>
                 <input 
                   type="date" 
                   v-model="filtros.dataFim" 
-                  class="form-control form-control-sm"
+                  class="form-control form-control-sm date-input-ios"
                   @change="validarDatas"
                 >
               </div>
@@ -684,6 +684,15 @@ canvas:hover {
   
   .filter-group .btn {
     width: 100%;
+  }
+
+  .flex-fill-robust {
+    width: 100%;
+    min-width: 0;
+  }
+  
+  .date-input-ios {
+    padding-right: 0.35rem; /* Especial para iPhone */
   }
 
   .sched-table thead th:nth-child(2),

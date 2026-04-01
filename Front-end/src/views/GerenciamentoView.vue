@@ -1155,6 +1155,14 @@ onMounted(async () => {
     grid-template-columns: 1fr; /* Empilha campos no celular */
   }
 
+  .field-input, .field-select {
+    padding-right: 0.35rem; /* Ajuste para ícones nativos do iPhone */
+  }
+  
+  .field-group {
+    min-width: 0;
+  }
+
   .mgmt-table th:nth-child(3),
   .mgmt-table td:nth-child(3),
   .mgmt-table th:nth-child(4),
