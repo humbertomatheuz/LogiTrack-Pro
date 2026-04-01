@@ -5,10 +5,10 @@
     <!-- Seção de Filtros -->
     <div class="card shadow-sm mb-4">
       <div class="card-body p-3">
-        <div class="d-flex gap-3 align-items-end">
+        <div class="filters-container">
           <div class="flex-grow-1">
             <label class="form-label small fw-bold text-uppercase">Período de Análise</label>
-            <div class="d-flex gap-2 align-items-end">
+            <div class="filters-row">
               <div class="flex-fill">
                 <label class="field-label">Data Início</label>
                 <input 
@@ -649,6 +649,51 @@ canvas:hover {
   background-color: #b0bec5;
   border-color: #b0bec5;
   cursor: not-allowed;
+}
+
+/* ────────────────────────────────────────────────────────
+   RESPONSIVIDADE
+   ──────────────────────────────────────────────────────── */
+.filters-container {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.filters-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+@media (max-width: 768px) {
+  .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-group {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  
+  .filter-group .btn {
+    width: 100%;
+  }
+
+  .sched-table thead th:nth-child(2),
+  .sched-table tbody td:nth-child(2),
+  .sched-table thead th:nth-child(4),
+  .sched-table tbody td:nth-child(4),
+  .sched-table thead th:nth-child(6),
+  .sched-table tbody td:nth-child(6) {
+    display: none; /* Esconde colunas menos importantes no mobile */
+  }
 }
 
 /* ────────────────────────────────────────────────────────

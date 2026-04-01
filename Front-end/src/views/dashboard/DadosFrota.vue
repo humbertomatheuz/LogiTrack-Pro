@@ -246,7 +246,14 @@ onMounted(async () => {
 }
 @media (max-width: 768px) {
   .filters-card {
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  
+  .btn-filtrar {
+    width: 100%;
+    margin-top: 0.5rem;
   }
 }
 

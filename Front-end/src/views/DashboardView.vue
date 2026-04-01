@@ -75,9 +75,14 @@ const updateGlobalFilter = () => {
 /* Customização das Nav Tabs do Bootstrap */
 .custom-nav-tabs {
   border-bottom: 2px solid #e2e8f0;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 
 .custom-nav-tabs .nav-link {
+  white-space: nowrap;
   color: #64748b;
   font-weight: 600;
   border: none;

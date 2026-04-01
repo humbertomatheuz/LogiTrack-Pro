@@ -212,4 +212,64 @@ const authStore = useAuthStore()
   opacity: 0;
   transform: translateY(-6px);
 }
+
+/* ══════════════════════════════════════════
+   RESPONSIVIDADE (MOBILE)
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .logi-navbar {
+    padding: 0 0.75rem;
+    height: 52px;
+  }
+  
+  .nav-brand {
+    min-width: fit-content;
+  }
+  
+  .brand-text {
+    font-size: 0.9rem;
+  }
+
+  .nav-links {
+    gap: 0;
+  }
+  
+  .nav-link {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  .nav-actions {
+    min-width: fit-content;
+    gap: 0.5rem;
+  }
+  
+  .nav-user-pill {
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .user-name {
+    display: none; /* Esconde nome no mobile */
+  }
+  
+  .logout-btn {
+    padding: 0.25rem;
+    font-size: 0.75rem;
+  }
+  
+  .logout-btn .material-symbols-outlined {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-text {
+    display: none; /* Esconde texto da marca em telas minúsculas */
+  }
+  
+  .nav-links {
+    flex: 1;
+    justify-content: center;
+  }
+}
 </style>

@@ -1139,4 +1139,61 @@ onMounted(async () => {
 .autocomplete-item--empty:hover {
   background: transparent;
 }
+
+/* ══════════════════════════════════════════
+   RESPONSIVIDADE (GERENCIAMENTO)
+══════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .content-grid {
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .field-row {
+    grid-template-columns: 1fr; /* Empilha campos no celular */
+  }
+
+  .mgmt-table th:nth-child(3),
+  .mgmt-table td:nth-child(3),
+  .mgmt-table th:nth-child(4),
+  .mgmt-table td:nth-child(4) {
+    display: none; /* Esconde Data e Custo no mobile para caber placa/serviço */
+  }
+  
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .filter-tabs {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  
+  .filter-tab {
+    flex: 1;
+    text-align: center;
+    padding: 0.4rem 0.2rem;
+    font-size: 0.65rem;
+  }
+
+  .mgmt-table th, .mgmt-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .action-btn {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .badge--pending, .badge--active, .badge--done {
+    font-size: 0.55rem;
+    padding: 0.2rem 0.4rem;
+  }
+}
 </style>
