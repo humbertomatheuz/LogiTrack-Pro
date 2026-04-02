@@ -1,16 +1,17 @@
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
 
-const KEEP_ALIVE_INTERVAL = 5 * 60 * 1000 // 10 minutos
+const KEEP_ALIVE_INTERVAL = 5 * 60 * 1000
 let intervalId = null
 
 const keepAlive = async () => {
-  try {
-    const apiURL = import.meta.env.VITE_API_URL || ''
-    await fetch(apiURL, { mode: 'no-cors' })
-    console.debug('Keep-alive ping enviado com sucesso.')
-  } catch (error) {
-  }
+  const now = new Date()
+  const hour = now.getHours()
+
+  if (hour < 7 || hour >= 22) return
+
+  const apiURL = import.meta.env.VITE_API_URL || ''
+  fetch(apiURL, { mode: 'no-cors' }).catch(() => {})
 }
 
 onMounted(() => {
