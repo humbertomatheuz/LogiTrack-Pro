@@ -102,7 +102,19 @@ function selectVeiculo(v) {
 }
 
 function handleVeiculoBlur() {
-  setTimeout(() => { showVeiculoDropdown.value = false }, 200)
+  setTimeout(() => {
+    showVeiculoDropdown.value = false
+    // Se não há uma seleção válida (o modelValue não é um ID ou o texto não bate), limpa tudo
+    const hasSelection = veiculos.value.some(v => v.id === props.modelValue);
+    if (!hasSelection) {
+      veiculoSearch.value = '';
+      emit('update:modelValue', '');
+    } else {
+      // Garante que o texto exibido é o da seleção válida
+      const v = veiculos.value.find(v => v.id === props.modelValue);
+      if (v) veiculoSearch.value = `${v.placa} — ${v.modelo}`;
+    }
+  }, 200)
 }
 </script>
 

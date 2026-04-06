@@ -77,8 +77,7 @@ const updateGlobalFilter = () => {
   border-bottom: 2px solid #e2e8f0;
   display: flex !important;
   flex-direction: row !important;
-  flex-wrap: nowrap;
-  overflow-x: auto;
+  flex-wrap: wrap;
 }
 
 .custom-nav-tabs .nav-link {
